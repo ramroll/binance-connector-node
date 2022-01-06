@@ -1,6 +1,7 @@
 const { validateRequiredParameters } = require('../helpers/validation')
 const { isEmptyValue } = require('../helpers/utils')
 const WebSocketClient = require('ws')
+const SocketProxyAgent = require('socks-proxy-agent')
 
 /**
  * API websocket endpoints
@@ -222,7 +223,9 @@ const Websocket = superclass => class extends superclass {
     const wsRef = {}
     wsRef.closeInitiated = false
     const initConnect = () => {
-      const ws = new WebSocketClient(url)
+      const ws = new WebSocketClient(url, {
+        agent: new SocketProxyAgent("socks://localhost:7890")
+      })
       wsRef.ws = ws
       Object.keys(callbacks).forEach((event, _) => {
         this.logger.debug(`listen to event: ${event}`)
